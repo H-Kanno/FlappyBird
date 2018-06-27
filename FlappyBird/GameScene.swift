@@ -83,7 +83,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let resetItem = SKAction.moveBy(x: (self.frame.size.width+itemTexture.size().width*2), y: 0, duration: 0)
         let repeatScrollItem = SKAction.repeatForever(SKAction.sequence([moveItem, resetItem]))
         
-        item.run(repeatScrollItem)
+        itemNode.run(repeatScrollItem)
         itemNode.addChild(item)
     }
     
