@@ -24,10 +24,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     // スコア
     var score = 0
+    var itemScore = 0
     let userDefaults:UserDefaults = UserDefaults.standard
     var scoreLabelNode: SKLabelNode!
     var bestScoreLabelNode: SKLabelNode!
-    var itemScore: SKLabelNode!
+    var itemScoreLabelNode: SKLabelNode!
     
     
     
@@ -65,6 +66,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // スコアの設定
         setupScoreLabel()
+        setupItemScore()
     }
     
     
@@ -72,19 +74,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let itemTexture = SKTexture(imageNamed: "coin")
         itemTexture.filteringMode = .linear
         
-        let item = SKSpriteNode(texture: itemTexture)
-        item.position = CGPoint(x: self.frame.size.width+itemTexture.size().width, y: self.frame.size.height/2)
-        item.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: item.size.width, height: item.size.height))
-        item.physicsBody?.isDynamic = false
-        item.physicsBody?.categoryBitMask = self.itemCategory
-        //item.physicsBody?.contactTestBitMask = self.
-        
         let moveItem = SKAction.moveBy(x: -(self.frame.size.width+itemTexture.size().width*2), y: 0, duration: 10.0)
         let resetItem = SKAction.moveBy(x: (self.frame.size.width+itemTexture.size().width*2), y: 0, duration: 0)
         let repeatScrollItem = SKAction.repeatForever(SKAction.sequence([moveItem, resetItem]))
         
-        itemNode.run(repeatScrollItem)
-        itemNode.addChild(item)
+        let createItemAnimation = SKAction.run {
+            let item = SKSpriteNode(texture: itemTexture)
+            item.position = CGPoint(x: self.frame.size.width+itemTexture.size().width, y: self.frame.size.height/2)
+            item.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: item.size.width, height: item.size.height))
+            item.physicsBody?.isDynamic = false
+            item.physicsBody?.categoryBitMask = self.itemCategory
+            item.physicsBody?.contactTestBitMask = self.birdCategory
+            
+            item.run(repeatScrollItem)
+            self.itemNode.addChild(item)
+        }
+      
+        let waitAnimation = SKAction.wait(forDuration: 2)
+        let repeatForeverAnimation = SKAction.repeatForever(SKAction.sequence([createItemAnimation, waitAnimation]))
+        
+        itemNode.run(repeatForeverAnimation)
     }
     
     
@@ -292,6 +301,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 userDefaults.synchronize()
             }
         }
+        else if (contact.bodyA.categoryBitMask & itemCategory ) == itemCategory || ( contact.bodyB.categoryBitMask & itemCategory ) == itemCategory {
+            // アイテムと衝突したと判定
+            print("ItemGet")
+            itemScore += 1
+            itemScoreLabelNode.text = "Item Score:\(itemScore)"
+        }
         else {
             // 壁か地面と衝突した
             print("GameOver")
@@ -311,6 +326,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func restart() {
         score = 0
         scoreLabelNode.text = "Score:\(score)"
+        itemScore = 0
+        itemScoreLabelNode.text = "Item Score:\(itemScore)"
         
         bird.position = CGPoint(x: self.frame.size.width * 0.2, y: self.frame.size.height * 0.7)
         bird.physicsBody?.velocity = CGVector.zero
@@ -343,6 +360,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let bestScore = userDefaults.integer(forKey: "BEST")
         bestScoreLabelNode.text = "Best Score:\(bestScore)"
         self.addChild(bestScoreLabelNode)
+    }
+    
+    
+    func setupItemScore() {
+        itemScore = 0
+        itemScoreLabelNode = SKLabelNode()
+        itemScoreLabelNode.fontColor = UIColor.black
+        itemScoreLabelNode.position = CGPoint(x: 10, y: self.frame.size.height - 120 )
+        itemScoreLabelNode.zPosition = 100
+        itemScoreLabelNode.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.left
+        itemScoreLabelNode.text = "Item Score:\(itemScore)"
+        self.addChild(itemScoreLabelNode)
     }
     
     
