@@ -30,7 +30,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var bestScoreLabelNode: SKLabelNode!
     var itemScoreLabelNode: SKLabelNode!
     
-    
+    // その他
+    var itemKyeString: String!
     
     // SKView上にシーンが表示された時に呼ばれるメソッド
     override func didMove(to view: SKView) {
@@ -71,14 +72,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     func setupItem() {
+        var i:Int = 0
+        
         let itemTexture = SKTexture(imageNamed: "coin")
         itemTexture.filteringMode = .linear
         
-        let moveItem = SKAction.moveBy(x: -(self.frame.size.width+itemTexture.size().width*2), y: 0, duration: 10.0)
+        let moveItem = SKAction.moveBy(x: -(self.frame.size.width+itemTexture.size().width*2), y: 0, duration: 5)
         let resetItem = SKAction.moveBy(x: (self.frame.size.width+itemTexture.size().width*2), y: 0, duration: 0)
         let repeatScrollItem = SKAction.repeatForever(SKAction.sequence([moveItem, resetItem]))
         
         let createItemAnimation = SKAction.run {
+            i += 1
+            
             let item = SKSpriteNode(texture: itemTexture)
             item.position = CGPoint(x: self.frame.size.width+itemTexture.size().width, y: self.frame.size.height/2)
             item.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: item.size.width, height: item.size.height))
@@ -86,7 +91,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             item.physicsBody?.categoryBitMask = self.itemCategory
             item.physicsBody?.contactTestBitMask = self.birdCategory
             
-            item.run(repeatScrollItem)
+            self.itemKyeString = "itemKey+\(i)"
+            item.run(repeatScrollItem, withKey: self.itemKyeString)
             self.itemNode.addChild(item)
         }
       
@@ -191,9 +197,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             // スコアアップ用のノード
             let scoreNode = SKNode()
-            scoreNode.position = CGPoint(x: upper.size.width, y: self.frame.height / 2.0)
+            //scoreNode.position = CGPoint(x: upper.size.width, y: self.frame.height / 2.0)
             //scoreNode.position = CGPoint(x: 0, y: self.frame.height / 2.0)
+            scoreNode.position = CGPoint(x: upper.size.width + self.bird.size.width / 2, y: self.frame.height / 2.0)
             scoreNode.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: upper.size.width, height: self.frame.size.height))
+            scoreNode.physicsBody?.isDynamic = false
             scoreNode.physicsBody?.categoryBitMask = self.scoreCategory
             scoreNode.physicsBody?.contactTestBitMask = self.birdCategory
             wall.addChild(scoreNode)
@@ -303,6 +311,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         else if (contact.bodyA.categoryBitMask & itemCategory ) == itemCategory || ( contact.bodyB.categoryBitMask & itemCategory ) == itemCategory {
             // アイテムと衝突したと判定
+            //itemNode.removeAction(forKey: self.itemKyeString)
+            itemNode.removeAction(forKey: self.itemKyeString)
             print("ItemGet")
             itemScore += 1
             itemScoreLabelNode.text = "Item Score:\(itemScore)"
@@ -388,9 +398,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
 
 }
-
-
-
 
 
 
