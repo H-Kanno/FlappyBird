@@ -14,6 +14,7 @@
 		5812F27D20DA07240045E37B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5812F27C20DA07240045E37B /* Assets.xcassets */; };
 		5812F28020DA07240045E37B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5812F27E20DA07240045E37B /* LaunchScreen.storyboard */; };
 		58464C0920DB3BA30097FC44 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58464C0820DB3BA30097FC44 /* GameScene.swift */; };
+		5899603220E4633F00530E26 /* coinSound.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 5899603120E4601700530E26 /* coinSound.m4a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		5812F27F20DA07240045E37B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5812F28120DA07240045E37B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		58464C0820DB3BA30097FC44 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
+		5899603120E4601700530E26 /* coinSound.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = coinSound.m4a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +68,7 @@
 				5812F27E20DA07240045E37B /* LaunchScreen.storyboard */,
 				5812F28120DA07240045E37B /* Info.plist */,
 				5812F27920DA07210045E37B /* FlappyBird.xcdatamodeld */,
+				5899603120E4601700530E26 /* coinSound.m4a */,
 			);
 			path = FlappyBird;
 			sourceTree = "<group>";
@@ -128,6 +131,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5899603220E4633F00530E26 /* coinSound.m4a in Resources */,
 				5812F28020DA07240045E37B /* LaunchScreen.storyboard in Resources */,
 				5812F27D20DA07240045E37B /* Assets.xcassets in Resources */,
 				5812F27820DA07210045E37B /* Main.storyboard in Resources */,

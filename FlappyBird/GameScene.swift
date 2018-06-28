@@ -7,6 +7,7 @@
 //
 
 import SpriteKit
+import AVFoundation
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
@@ -31,7 +32,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var itemScoreLabelNode: SKLabelNode!
     
     // その他
-    var itemKyeString: String!
+    var audioPlayerInstance01: AVAudioPlayer!
+    
+    
     
     // SKView上にシーンが表示された時に呼ばれるメソッド
     override func didMove(to view: SKView) {
@@ -64,6 +67,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         setupBird()
         // アイテムの実行
         setupItem()
+        itemSound()
         
         // スコアの設定
         setupScoreLabel()
@@ -91,8 +95,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             item.physicsBody?.categoryBitMask = self.itemCategory
             item.physicsBody?.contactTestBitMask = self.birdCategory
             
-            self.itemKyeString = "itemKey+\(i)"
-            item.run(repeatScrollItem, withKey: self.itemKyeString)
+            item.run(repeatScrollItem)
             self.itemNode.addChild(item)
         }
       
@@ -311,8 +314,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         else if (contact.bodyA.categoryBitMask & itemCategory ) == itemCategory || ( contact.bodyB.categoryBitMask & itemCategory ) == itemCategory {
             // アイテムと衝突したと判定
-            //itemNode.removeAction(forKey: self.itemKyeString)
-            itemNode.removeAction(forKey: self.itemKyeString)
+            if(contact.bodyA.categoryBitMask & itemCategory ) == itemCategory {
+                itemNode.removeChildren(in: [contact.bodyA.node!])
+            }
+            else if ( contact.bodyB.categoryBitMask & itemCategory ) == itemCategory {
+                itemNode.removeChildren(in: [contact.bodyB.node!])
+            }
+            
+            audioPlayerInstance01.play()
+            
             print("ItemGet")
             itemScore += 1
             itemScoreLabelNode.text = "Item Score:\(itemScore)"
@@ -332,6 +342,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
         }
     }
+    
+    
+    func itemSound() {
+        let soundFilePath01 = Bundle.main.path(forResource: "coinSound", ofType: "m4a")
+        let sound01:URL = URL(fileURLWithPath: soundFilePath01!)
+        
+        do {
+            audioPlayerInstance01 = try AVAudioPlayer(contentsOf: sound01, fileTypeHint: nil)
+        } catch {
+            print("AVAudioPlayerインスタンス作成失敗")
+        }
+        // 音の準備
+        audioPlayerInstance01.prepareToPlay()
+    }
+    
     
     func restart() {
         score = 0
